@@ -18,6 +18,19 @@ head(hotel_data)
 colnames(hotel_data)
 summary(hotel_data)
 
+#hotel_clean <- hotel_data
+#hotel_removed <- data.frame()
+#rows_to_remove <- c()
+#for (i in 2:nrow(hotel_data)) {
+#     for (j in 1:(i-1)) {
+#          if (hotel_data[i, 2] == hotel_data[j, 2]) {
+#               rows_to_remove <- c(rows_to_remove, i)
+#          }
+#     }
+#}
+#hotel_clean <- hotel_clean[-rows_to_remove, ]
+#View(hotel_clean)
+
 sum(duplicated(hotel_data))
 hotel_data[duplicated(hotel_data), ]
 
@@ -44,11 +57,13 @@ View(hotel_clean_2)
 
 dim(hotel_clean_2)
 
+hotel_clean_2[hotel_clean_2 == "NULL"] <- NA
 colSums(is.na(hotel_clean_2))
 
 mean_children <- mean(hotel_clean_2$children, na.rm = TRUE)
 mean_children <- round(mean_children)
 hotel_clean_2$children[is.na(hotel_clean_2$children)] <- mean_children
+hotel_clean_2$country[is.na(hotel_clean_2$country)] <- "Unknown"
 
 colSums(is.na(hotel_clean_2))
 
