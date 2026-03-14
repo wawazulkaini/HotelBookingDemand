@@ -1,15 +1,18 @@
+#Install needed packages
 install.packages("tidyverse")
 install.packages("ggplot2")
 install.packages("dplyr")
 install.packages("readr")
 install.packages("plotly")
 
+#Call packages library
 library(tidyverse)
 library(ggplot2)
 library(dplyr)
 library(readr)
 library(plotly)
 
+#Read dataset excel file
 library(readxl)
 hotel_data <- read_excel("C:/Users/HUAWEI/Downloads/hotel_bookings.xlsx")
 
@@ -31,14 +34,17 @@ summary(hotel_data)
 #hotel_clean <- hotel_clean[-rows_to_remove, ]
 #View(hotel_clean)
 
+#Check for dupicated data
 sum(duplicated(hotel_data))
 hotel_data[duplicated(hotel_data), ]
 
+#Create new dataset with non-duplicated data
 hotel_clean <- hotel_data %>%
      distinct()
 
 sum(duplicated(hotel_clean))
 
+#Remove unneeded data and transfer needed data to new dataset
 hotel_clean_2 <- hotel_clean[, c("hotel",
                          "arrival_date_month",
                          "arrival_date_year",
@@ -57,22 +63,34 @@ View(hotel_clean_2)
 
 dim(hotel_clean_2)
 
+#Change NULL in dataset to NA
 hotel_clean_2[hotel_clean_2 == "NULL"] <- NA
+
+#Check for missing values
 colSums(is.na(hotel_clean_2))
 
+#Calculate mean for children column
 mean_children <- mean(hotel_clean_2$children, na.rm = TRUE)
 mean_children <- round(mean_children)
-hotel_clean_2$children[is.na(hotel_clean_2$children)] <- mean_children
-hotel_clean_2$country[is.na(hotel_clean_2$country)] <- "Unknown"
 
+#Change NA values in children column to mean
+hotel_clean_2$children[is.na(hotel_clean_2$children)] <- mean_children
+
+#Remove remaining rows with NA values
+hotel_clean <- na.omit(hotel_clean_3)
+
+#Check for missing values again
 colSums(is.na(hotel_clean_2))
 
+#Create new columns total_guests & total_nights
 hotel_clean_2$total_guests <- hotel_clean_2$adults + hotel_clean_2$children + hotel_clean_2$babies
 hotel_clean_2$total_nights <- hotel_clean_2$stays_in_weekend_nights + hotel_clean_2$stays_in_week_nights
 
+#Remove all rows where total_guests == 0
 hotel_clean_3 <- hotel_clean_2[hotel_clean_2$total_guests != 0, ]
 View(hotel_clean_3)
 
+#Check for total_guests == 0
 sum(hotel_clean_3$total_guests == 0)
 
 table(hotel_clean_3$hotel)
