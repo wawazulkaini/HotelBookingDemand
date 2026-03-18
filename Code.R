@@ -77,7 +77,7 @@ mean_children <- round(mean_children)
 hotel_clean_2$children[is.na(hotel_clean_2$children)] <- mean_children
 
 #Remove remaining rows with NA values
-hotel_clean <- na.omit(hotel_clean_3)
+hotel_clean <- na.omit(hotel_clean_2)
 
 #Check for missing values again
 colSums(is.na(hotel_clean_2))
