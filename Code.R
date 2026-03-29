@@ -77,14 +77,18 @@ mean_children <- round(mean_children)
 hotel_clean_2$children[is.na(hotel_clean_2$children)] <- mean_children
 
 #Remove remaining rows with NA values
-hotel_clean <- na.omit(hotel_clean_2)
+hotel_clean_2 <- na.omit(hotel_clean_2)
 
 #Check for missing values again
 colSums(is.na(hotel_clean_2))
 
-#Create new columns total_guests & total_nights
+#Create new columns total_guests, total_nights & Date
 hotel_clean_2$total_guests <- hotel_clean_2$adults + hotel_clean_2$children + hotel_clean_2$babies
 hotel_clean_2$total_nights <- hotel_clean_2$stays_in_weekend_nights + hotel_clean_2$stays_in_week_nights
+hotel_clean_2$Date <- paste(hotel_clean_2$arrival_date_year,hotel_clean_2$arrival_date_month, hotel_clean_2$arrival_date_day_of_month)
+
+#Format column Date
+hotel_clean_2$Date <- as.Date(hotel_clean_2$Date, format = "%Y %B %d")
 
 #Remove all rows where total_guests == 0
 hotel_clean_3 <- hotel_clean_2[hotel_clean_2$total_guests != 0, ]
@@ -92,6 +96,27 @@ View(hotel_clean_3)
 
 #Check for total_guests == 0
 sum(hotel_clean_3$total_guests == 0)
+
+#Create boxplot of adr
+boxplot(hotel_clean_3$adr,
+         main = "Boxplot of ADR",
+         ylab = "ADR",
+         col = "lightblue")
+
+#Remove adr outliers
+hotel_clean_3 <- hotel_clean_3 %>% filter(adr < 1000)
+
+#Create boxplot of total_guests
+boxplot(hotel_clean_3$total_guests,
+        main = "Boxplot of Total Guests",
+        ylab = "Number of Guests",
+        col = "lightgreen")
+
+#Create boxplot of total_nights
+boxplot(hotel_clean_3$total_nights,
+        main = "Boxplot of Total Nights",
+        ylab = "Number of Nights",
+        col = "lightpink")
 
 table(hotel_clean_3$hotel)
 ggplot(hotel_clean_3, aes(x = hotel)) +
@@ -109,7 +134,7 @@ hotel_clean_3$arrival_date_month <- factor(
 monthly_bookings <- hotel_clean_3 %>%
   group_by(arrival_date_month) %>%
   summarise(total_bookings = n())
-monthly_bookings
+View(monthly_bookings)
 
 ggplot(monthly_bookings,
        aes(x = arrival_date_month, y = total_bookings)) +
@@ -129,3 +154,18 @@ ggplot(hotel_clean_3, aes(x = arrival_date_month, fill = hotel)) +
        y = "Number of Bookings",
        fill = "Hotel Type") +
   theme_minimal()
+
+ggplot(hotel_clean_3, aes(x = total_nights)) +
+     geom_histogram(binwidth = 1) +
+     labs(title = "Distribution of Length of Stay",
+          x = "Total Nights",
+          y = "Frequency")
+
+avg_stay <- mean(hotel_clean_3$total_nights, na.rm = TRUE)
+avg_stay
+
+ggplot(hotel_clean_3, aes(x = total_guests)) +
+    geom_histogram(binwidth = 1) +
+    labs(title = "Guest Count Distribution",
+         x = "Number of Guests",
+         y = "Frequency")
