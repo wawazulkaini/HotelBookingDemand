@@ -97,6 +97,14 @@ View(hotel_clean_3)
 #Check for total_guests == 0
 sum(hotel_clean_3$total_guests == 0)
 
+europe_codes <- c("ALB", "AND", "AUT", "BEL", "BIH", "BGR", "HRV", "CYP", "CZE", "DNK",
+                  "EST", "FIN", "FRA", "DEU", "GRC", "HUN", "ISL", "IRL", "ITA", "LVA",
+                  "LIE", "LTU", "LUX", "MLT", "MNE", "NLD", "NOR", "POL", "PRT", "ROU",
+                  "RUS", "SMR", "SRB", "SVK", "SVN", "ESP", "SWE", "CHE", "UKR", "GBR")
+
+
+hotel_clean_3 <- hotel_clean_3 %>% filter(country %in% europe_codes)
+
 #Create boxplot of adr
 boxplot(hotel_clean_3$adr,
          main = "Boxplot of ADR",
@@ -104,7 +112,7 @@ boxplot(hotel_clean_3$adr,
          col = "lightblue")
 
 #Remove adr outliers
-hotel_clean_3 <- hotel_clean_3 %>% filter(adr < 1000)
+hotel_clean_3 <- hotel_clean_3 %>% filter(adr < 500)
 
 #Create boxplot of total_guests
 boxplot(hotel_clean_3$total_guests,
@@ -169,3 +177,5 @@ ggplot(hotel_clean_3, aes(x = total_guests)) +
     labs(title = "Guest Count Distribution",
          x = "Number of Guests",
          y = "Frequency")
+
+write.csv(hotel_clean_3, "hotel_cleaned_data.csv", row.names = FALSE)
