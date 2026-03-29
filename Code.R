@@ -17,9 +17,9 @@ library(readxl)
 hotel_data <- read_excel("C:/Users/HUAWEI/Downloads/hotel_bookings.xlsx")
 
 str(hotel_data)
-head(hotel_data)
 colnames(hotel_data)
 summary(hotel_data)
+dim(hotel_data)
 
 #hotel_clean <- hotel_data
 #hotel_removed <- data.frame()
@@ -60,8 +60,6 @@ hotel_clean_2 <- hotel_clean[, c("hotel",
                          "assigned_room_type",
                          "adr")]
 View(hotel_clean_2)
-
-dim(hotel_clean_2)
 
 #Change NULL in dataset to NA
 hotel_clean_2[hotel_clean_2 == "NULL"] <- NA
